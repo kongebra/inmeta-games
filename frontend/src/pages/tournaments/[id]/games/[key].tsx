@@ -12,17 +12,19 @@ import { tournamentGamesQuery } from "lib/queries";
 import Head from "next/head";
 import clsx from "clsx";
 
+import { FaMedal } from "react-icons/fa";
+
 interface Props {
   game: Game;
 }
 
-const PlayerItem = ({
-  player,
-  className,
-}: {
+type PlayerItemProps = {
   player: Player;
   className?: string;
-}) => {
+  placement?: "first" | "second" | "third";
+};
+
+const PlayerItem = ({ player, className, placement }: PlayerItemProps) => {
   const [client] = useState(getClient());
   const imageProps = useNextSanityImage(client, player.image, {
     imageBuilder: (builder) =>
@@ -43,6 +45,17 @@ const PlayerItem = ({
           layout="responsive"
           className="object-fit"
         />
+        {placement && (
+          <div className="bg-black bg-opacity-50 p-2.5 rounded-bl-3xl absolute top-0 right-0">
+            <FaMedal
+              className={clsx("text-5xl", {
+                "text-amber-300": placement === "first",
+                "text-slate-300": placement === "second",
+                "text-orange-300": placement === "third",
+              })}
+            />
+          </div>
+        )}
       </figure>
 
       <div className="p-4">
@@ -75,23 +88,26 @@ const TournamentGamesDetailPage: NextPage<Props> = ({ game }) => {
           (game.firstPlace || game.secondPlace || game.thirdPlace) && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Result:</h2>
-              <div className="grid grid-cols-3 gap-5">
+              <div className="grid grid-cols-3 grid gap-5">
                 {game.secondPlace && (
                   <PlayerItem
                     className="bg-slate-400 text-white scale-75"
                     player={game.secondPlace}
+                    placement="second"
                   />
                 )}
                 {game.firstPlace && (
                   <PlayerItem
                     className="bg-amber-500 text-white"
                     player={game.firstPlace}
+                    placement="first"
                   />
                 )}
                 {game.thirdPlace && (
                   <PlayerItem
-                    className="bg-orange-700 text-white scale-50"
+                    className="bg-orange-700 text-white scale-75"
                     player={game.thirdPlace}
+                    placement="third"
                   />
                 )}
               </div>
@@ -107,6 +123,7 @@ const TournamentGamesDetailPage: NextPage<Props> = ({ game }) => {
                   key={player._id}
                   className="bg-amber-500 text-white"
                   player={player}
+                  placement="first"
                 />
               ))}
               {game?.secondPlaceTeam?.map((player) => (
@@ -114,6 +131,7 @@ const TournamentGamesDetailPage: NextPage<Props> = ({ game }) => {
                   key={player._id}
                   className="bg-slate-500 text-white"
                   player={player}
+                  placement="second"
                 />
               ))}
               {game?.thirdPlaceTeam?.map((player) => (
@@ -121,6 +139,7 @@ const TournamentGamesDetailPage: NextPage<Props> = ({ game }) => {
                   key={player._id}
                   className="bg-orange-700 text-white"
                   player={player}
+                  placement="third"
                 />
               ))}
             </div>
