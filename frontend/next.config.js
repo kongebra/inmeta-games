@@ -12,7 +12,7 @@ const nextConfig = {
     domains: ["cdn.sanity.io"],
   },
 
-  output: "standalone",
+  // output: "standalone",
 };
 
 module.exports = nextConfig;

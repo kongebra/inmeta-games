@@ -42,6 +42,18 @@ export default {
       validation: (Rule) => Rule.integer().positive(),
     },
     {
+      name: "organizer",
+      title: "Organizer",
+      type: "reference",
+      to: [{ type: "player" }],
+    },
+    {
+      name: "organizerParticipated",
+      title: "Did organizer participate?",
+      type: "boolean",
+      initialValue: false,
+    },
+    {
       name: "players",
       title: "Players",
       type: "array",

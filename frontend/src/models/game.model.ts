@@ -18,4 +18,7 @@ export interface Game {
   firstPlaceTeam?: Player[];
   secondPlaceTeam?: Player[];
   thirdPlaceTeam?: Player[];
+
+  organizer?: { _type: "reference"; _ref: string };
+  organizerParticipated: boolean;
 }

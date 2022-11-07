@@ -16,6 +16,14 @@ interface Props {
 
 interface PlayerScore extends Player {
   score: number;
+  participations: number;
+  firstPlaceCount: number;
+  secondPlaceCount: number;
+  thidPlaceCount: number;
+  organizerWithParticipation: number;
+  organizerWithoutParticipation: number;
+
+  placement: number;
 }
 
 const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
@@ -33,11 +41,37 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
           playerScore.push({
             ...player,
             score: 3,
+            participations: 1,
+            firstPlaceCount: 0,
+            secondPlaceCount: 0,
+            thidPlaceCount: 0,
+            organizerWithParticipation: 0,
+            organizerWithoutParticipation: 0,
+            placement: -1,
           });
         } else {
           playerScore[index].score += 3;
+          playerScore[index].participations++;
         }
       });
+
+      if (game.organizer) {
+        const index = playerScore.findIndex(
+          (p) => p._id === game.organizer?._ref
+        );
+
+        if (index !== -1) {
+          const points = game.organizerParticipated ? 1 : 3;
+          // 3 poeng til arragnør hvis de ikke kunne delta, 1 poeng hvis ikke
+          playerScore[index].score += points;
+
+          if (points === 3) {
+            playerScore[index].organizerWithoutParticipation++;
+          } else {
+            playerScore[index].organizerWithParticipation++;
+          }
+        }
+      }
 
       // Lag-basert konkurranse, hent spiller fra lag
       if (game.teamBased) {
@@ -46,6 +80,7 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
 
           if (index !== -1) {
             playerScore[index].score += 3;
+            playerScore[index].firstPlaceCount++;
           }
         });
         game.secondPlaceTeam?.forEach((player) => {
@@ -53,6 +88,7 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
 
           if (index !== -1) {
             playerScore[index].score += 2;
+            playerScore[index].secondPlaceCount++;
           }
         });
         game.thirdPlaceTeam?.forEach((player) => {
@@ -60,6 +96,7 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
 
           if (index !== -1) {
             playerScore[index].score += 1;
+            playerScore[index].thidPlaceCount++;
           }
         });
       } else {
@@ -73,6 +110,7 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
 
           if (index !== -1) {
             playerScore[index].score += 3;
+            playerScore[index].firstPlaceCount++;
           }
         }
 
@@ -84,6 +122,7 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
 
           if (index !== -1) {
             playerScore[index].score += 3;
+            playerScore[index].secondPlaceCount++;
           }
         }
 
@@ -95,12 +134,42 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
 
           if (index !== -1) {
             playerScore[index].score += 3;
+            playerScore[index].thidPlaceCount++;
           }
         }
       }
     });
 
-    return playerScore;
+    const result = playerScore
+      .sort((a, b) => {
+        if (a.score < b.score) {
+          return 1;
+        }
+        if (a.score > b.score) {
+          return -1;
+        }
+
+        return 0;
+      })
+      .map((player, index) => {
+        return {
+          ...player,
+          placement: index + 1,
+        };
+      });
+
+    result.forEach((player, index) => {
+      const currentPlayerPlacement = player.placement;
+      const currentPlayerScore = player.score;
+
+      for (let i = index; i < result.length; i++) {
+        if (result[i].score === currentPlayerScore) {
+          result[i].placement = currentPlayerPlacement;
+        }
+      }
+    });
+
+    return result;
   }, [tournament.games]);
 
   return (
@@ -146,6 +215,15 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
                 Last name
               </th>
               <th scope="col" className="px-6 py-3">
+                Participations
+              </th>
+              <th scope="col" className="px-6 py-3">
+                First / Second / Third
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Organizer (Participated / No participation)
+              </th>
+              <th scope="col" className="px-6 py-3">
                 Score
               </th>
             </tr>
@@ -157,16 +235,39 @@ const TournamentDetailPage: NextPage<Props> = ({ tournament }) => {
                 <tr
                   key={player._id}
                   className={clsx(" dark:border-gray-700", {
-                    "bg-amber-500 text-white font-bold": index === 0,
-                    "bg-slate-400 text-white font-bold": index === 1,
-                    "bg-orange-700 text-white font-bold": index === 2,
-                    "bg-white dark:bg-gray-800":
-                      index !== 0 && index !== 1 && index !== 2,
+                    "bg-amber-500 text-white font-bold": player.placement === 1,
+                    "bg-slate-400 text-white font-bold": player.placement === 2,
+                    "bg-orange-700 text-white font-bold":
+                      player.placement === 3,
+                    "bg-white dark:bg-gray-800": ![1, 2, 3].includes(
+                      player.placement
+                    ),
                   })}
                 >
-                  <td className="px-6 py-4">{index + 1}</td>
+                  <td className="px-6 py-4">{player.placement}</td>
                   <td className="px-6 py-4">{player.firstName}</td>
                   <td className="px-6 py-4">{player.lastName}</td>
+                  <td className="px-6 py-4">{player.participations}</td>
+                  <td className="px-6 py-4 font-bold">
+                    <span className="p-2 rounded bg-white dark:bg-gray-800">
+                      <span className="text-amber-500">
+                        {player.firstPlaceCount}
+                      </span>
+                      {" / "}
+                      <span className="slate-400">
+                        {player.secondPlaceCount}
+                      </span>
+                      {" / "}
+                      <span className="text-orange-700">
+                        {player.thidPlaceCount}
+                      </span>
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    {player.organizerWithParticipation}
+                    {" / "}
+                    {player.organizerWithoutParticipation}
+                  </td>
                   <td className="px-6 py-4">{player.score}</td>
                 </tr>
               ))}
