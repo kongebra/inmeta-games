@@ -21,6 +21,12 @@ export default {
         hotspot: true,
       },
     },
+    {
+      name: "department",
+      title: "Department",
+      type: "reference",
+      to: { type: "department" },
+    },
   ],
   preview: {
     select: {
