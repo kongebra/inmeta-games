@@ -1,0 +1,28 @@
+{
+  "name": "inmeta-games-sanity-v3",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "deploy-graphql": "sanity graphql deploy"
+  },
+  "dependencies": {
+    "@sanity/ui": "^1.0.0-next.3",
+    "@sanity/vision": "^3.0.0-rc.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.6.0",
+    "react-is": "^18.2.0",
+    "sanity": "3.0.0-rc.2",
+    "styled-components": "^5.2"
+  },
+  "devDependencies": {
+    "@sanity/eslint-config-studio": "^2.0.1",
+    "eslint": "^8.27.0",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.4"
+  }
+}

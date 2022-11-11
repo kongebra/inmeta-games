@@ -1,9 +1,18 @@
 {
   "name": "root",
+  "private": true,
+  "license": "MIT",
   "workspaces": [
     "apps/**",
     "packages/**"
   ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "dev": "turbo run dev",
+    "deploy": "turbo run deploy"
+  },
   "devDependencies": {
     "turbo": "^1.6.3"
   }

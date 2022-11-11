@@ -18,8 +18,8 @@ export default {
       },
     },
   ],
-  preview: {
-    title: "name",
-    subtitle: "slug",
-  },
+  // select: {
+  //   title: "name",
+  //   subtitle: "slug.current",
+  // },
 };
