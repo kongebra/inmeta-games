@@ -88,7 +88,7 @@ const TournamentGamesDetailPage: NextPage<Props> = ({ game }) => {
           (game.firstPlace || game.secondPlace || game.thirdPlace) && (
             <div>
               <h2 className="text-2xl font-bold mb-4">Result:</h2>
-              <div className="grid grid-cols-3 grid gap-5">
+              <div className="grid grid-cols-3 gap-5">
                 {game.secondPlace && (
                   <PlayerItem
                     className="bg-slate-400 text-white scale-75"
